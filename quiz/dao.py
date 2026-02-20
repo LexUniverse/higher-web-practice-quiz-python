@@ -1,16 +1,16 @@
-"""Модуль c интерфейсами сервисов для работы c БД"""
+"""Модуль c интерфейсами сервисов для работы c БД."""
 
 from abc import ABC, abstractmethod
 
-from quiz.models import Quiz, Question, Category
+from quiz.models import Category, Question, Quiz
 
 
 class AbstractCategoryService(ABC):
-    """Интерфейс для работы c категориями"""
+    """Интерфейс для работы c категориями."""
 
     @abstractmethod
     def list_categories(self) -> list[Category]:
-        """Метод для получения списка категорий"""
+        """Метод для получения списка категорий."""
         ...
 
     @abstractmethod
@@ -55,7 +55,7 @@ class AbstractCategoryService(ABC):
 
 
 class AbstractQuizService(ABC):
-    """Интерфейс для работы с квизами"""
+    """Интерфейс для работы с квизами."""
 
     @abstractmethod
     def list_quizzes(self) -> list[Quiz]:
@@ -114,7 +114,7 @@ class AbstractQuizService(ABC):
 
 
 class AbstractQuestionService(ABC):
-    """Интерфейс для работы с вопросами"""
+    """Интерфейс для работы с вопросами."""
 
     @abstractmethod
     def list_questions(self) -> list[Question]:

@@ -1,36 +1,62 @@
-"""Модуль c роутингом"""
+"""Модуль c роутингом для приложения quiz."""
 
+from django.urls import path
 
-#### Category
+from quiz.views import category, question, quiz
 
-# - POST `/api/category` - создание категории
-# - GET `/api/category` - получение всех категории
-# - GET `/api/category/<int:id>` - получение категории по идентификатору
-# - PUT `/api/category/<int:id>` - изменение категории
-# - DELETE `/api/category/<int:id>` - удаление категории
+app_name = 'quiz'
 
+urlpatterns = [
+    path(
+        'category/',
+        category.CategoryListCreateView.as_view(),
+        name='category-create'
+    ),
+    path(
+        'category/<int:category_id>/',
+        category.CategoryDetailView.as_view(),
+        name='category-detail'
+    ),
 
-#### Question
+    path(
+        'quiz/',
+        quiz.QuizListCreateView.as_view(),
+        name='quiz-create'
+    ),
+    path(
+        'quiz/<int:quiz_id>/',
+        quiz.QuizDetailView.as_view(),
+        name='quiz-detail'
+    ),
+    path(
+        'quiz/by_title/<str:title>/',
+        quiz.QuizByTitleView.as_view(),
+        name='quiz-by-title'
+    ),
+    path(
+        'quiz/<int:quiz_id>/random_question/',
+        quiz.RandomQuestionView.as_view(),
+        name='quiz-random-question'
+    ),
 
-# - POST `/api/question` - создание вопроса
-# - GET `/api/question` - получение всех вопросов
-# - GET `/api/question/<int:id>` - получение вопроса по идентификатору
-# - GET `/api/question/by_text/<str:text>` - получение вопроса по тексту
-# - POST `/api/question/<int:id>/check` - проверка ответа на вопрос
-# - PUT `/api/question/<int:id>` - изменение вопроса
-# - DELETE `/api/question/<int:id>` - удаление вопроса
-
-
-#### Quiz
-
-# - POST `/api/quiz` - создание квиза
-# - GET `/api/quiz` - получение всех квизов
-# - GET `/api/quiz/<int:id>` - получение квиза по идентификатору
-# - GET `/api/quiz/<int:id>/random_question` - получение случайного вопроса по идентификатору квиза
-# - GET `/api/quiz/by_title/<str:title>` - получение квиза по названию
-# - PUT `/api/quiz/<int:id>` - изменение квиза
-# - DELETE `/api/quiz/<int:id>` - удаление квиза
-
-
-# Сюда добавляем все пути и их обработчики
-urlpatterns = []
+    path(
+        'question/',
+        question.QuestionListCreateView.as_view(),
+        name='question-create'
+    ),
+    path(
+        'question/<int:question_id>/',
+        question.QuestionDetailView.as_view(),
+        name='question-detail'
+    ),
+    path(
+        'question/by_text/<str:query>/',
+        question.QuestionByTextView.as_view(),
+        name='question-by-text'
+    ),
+    path(
+        'question/<int:question_id>/check/',
+        question.CheckAnswerView.as_view(),
+        name='question-check-answer'
+    ),
+]
