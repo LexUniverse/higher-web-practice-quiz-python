@@ -1,7 +1,10 @@
 """Модуль с реализацией сервиса квизов."""
 
+from django.shortcuts import get_object_or_404
+
 from quiz.dao import AbstractQuizService
 from quiz.models import Quiz
+from quiz.services.utils import update_object
 
 
 class QuizService(AbstractQuizService):
@@ -11,7 +14,7 @@ class QuizService(AbstractQuizService):
         return list(Quiz.objects.all())
 
     def get_quiz(self, quiz_id: int) -> Quiz:
-        return Quiz.objects.get(id=quiz_id)
+        return get_object_or_404(Quiz, id=quiz_id)
 
     def get_quizes_by_title(self, title: str) -> list[Quiz]:
         return list(Quiz.objects.filter(title__icontains=title))
@@ -20,12 +23,7 @@ class QuizService(AbstractQuizService):
         return Quiz.objects.create(**data)
 
     def update_quiz(self, quiz_id: int, data: dict) -> Quiz:
-        quiz = self.get_quiz(quiz_id)
-        for key, value in data.items():
-            setattr(quiz, key, value)
-        quiz.save()
-        return quiz
+        return update_object(Quiz, quiz_id, data)
 
     def delete_quiz(self, quiz_id: int) -> None:
-        quiz = self.get_quiz(quiz_id)
-        quiz.delete()
+        self.get_quiz(quiz_id).delete()

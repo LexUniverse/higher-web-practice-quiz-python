@@ -3,6 +3,7 @@
 from django.db import models
 
 from quiz import constants
+from quiz.validators import validate_min_options
 
 
 class Category(models.Model):
@@ -10,7 +11,8 @@ class Category(models.Model):
 
     title = models.CharField(
         max_length=constants.CATEGORY_TITLE_MAX_LENGTH,
-        verbose_name='Название категории'
+        verbose_name='Название категории',
+        unique=True
     )
 
     class Meta:
@@ -79,7 +81,8 @@ class Question(models.Model):
         verbose_name='Описание вопроса'
     )
     options = models.JSONField(
-        verbose_name='Варианты ответа (массив)'
+        verbose_name='Варианты ответа (массив)',
+        validators=[validate_min_options]
     )
     correct_answer = models.CharField(
         max_length=constants.CORRECT_ANSWER_MAX_LENGTH,

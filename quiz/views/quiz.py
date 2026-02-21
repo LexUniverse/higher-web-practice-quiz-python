@@ -1,10 +1,9 @@
-"""Модуль с контроллерами для квизов"""
+"""Модуль с контроллерами для квизов."""
 
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from quiz.models import Quiz
 from quiz.serializers import (QuestionSerializer, QuizDetailSerializer,
                               QuizSerializer)
 from quiz.services.question import QuestionService
@@ -15,7 +14,8 @@ question_service = QuestionService()
 
 
 class QuizListCreateView(APIView):
-    """
+    """Контроллер для получения списка или создания одного квиза.
+
     GET /api/quiz/
     POST /api/quiz/
     """
@@ -38,7 +38,8 @@ class QuizListCreateView(APIView):
 
 
 class QuizDetailView(APIView):
-    """
+    """Контроллер для работы с одним квизом.
+
     GET /api/quiz/<id:int>/
     PUT /api/quiz/<id:int>/
     DELETE /api/quiz/<id:int>/
@@ -46,39 +47,28 @@ class QuizDetailView(APIView):
 
     def get(self, request, quiz_id: int):
         """Получение квиза по ID с вопросами."""
-        try:
-            quiz = quiz_service.get_quiz(quiz_id)
-            serializer = QuizDetailSerializer(quiz)
-            return Response(serializer.data)
-        except Quiz.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+        quiz = quiz_service.get_quiz(quiz_id)
+        serializer = QuizDetailSerializer(quiz)
+        return Response(serializer.data)
 
     def put(self, request, quiz_id: int):
         """Обновление квиза."""
-        try:
-            serializer = QuizSerializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            updated_quiz = quiz_service.update_quiz(
-                quiz_id=quiz_id,
-                data=serializer.validated_data
-            )
-            return Response(QuizSerializer(updated_quiz).data)
-        except Quiz.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = QuizSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        updated_quiz = quiz_service.update_quiz(
+            quiz_id=quiz_id,
+            data=serializer.validated_data
+        )
+        return Response(QuizSerializer(updated_quiz).data)
 
     def delete(self, request, quiz_id: int):
         """Удаление квиза."""
-        try:
-            quiz_service.delete_quiz(quiz_id)
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        except Quiz.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+        quiz_service.delete_quiz(quiz_id)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class QuizByTitleView(APIView):
-    """
-    GET /api/quiz/by_title/<title: str>/
-    """
+    """GET /api/quiz/by_title/<title: str>/"""
 
     def get(self, request, title: str):
         """Получение квиза по названию."""
@@ -88,24 +78,16 @@ class QuizByTitleView(APIView):
 
 
 class RandomQuestionView(APIView):
-    """
-    GET /api/quiz/<id:int>/random_question/
-    """
+    """GET /api/quiz/<id:int>/random_question/"""
 
     def get(self, request, quiz_id: int):
         """Получение случайного вопроса из квиза."""
-        try:
-            quiz_service.get_quiz(quiz_id)
-            question = question_service.random_question_from_quiz(quiz_id)
-            if not question:
-                return Response(
-                    {"detail": "В этом квизе нет вопросов."},
-                    status=status.HTTP_404_NOT_FOUND
-                )
-            serializer = QuestionSerializer(question)
-            return Response(serializer.data)
-        except Quiz.DoesNotExist:
+        quiz_service.get_quiz(quiz_id)
+        question = question_service.random_question_from_quiz(quiz_id)
+        if not question:
             return Response(
-                {"detail": "Квиз не найден."},
+                {"detail": "В этом квизе нет вопросов."},
                 status=status.HTTP_404_NOT_FOUND
             )
+        serializer = QuestionSerializer(question)
+        return Response(serializer.data)

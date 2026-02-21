@@ -4,7 +4,6 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from quiz.models import Category
 from quiz.serializers import CategorySerializer
 from quiz.services.category import CategoryService
 
@@ -38,7 +37,7 @@ class CategoryListCreateView(APIView):
 
 
 class CategoryDetailView(APIView):
-    """Контроллер для работы с одной категорией (получение, обновление, удаление).
+    """Контроллер для работы с одной категорией.
 
     GET /api/category/<id:int>/
     PUT /api/category/<id:int>/
@@ -47,30 +46,21 @@ class CategoryDetailView(APIView):
 
     def get(self, request, category_id: int):
         """Получение категории по ID."""
-        try:
-            category = category_service.get_category(category_id)
-            serializer = CategorySerializer(category)
-            return Response(serializer.data)
-        except Category.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+        category = category_service.get_category(category_id)
+        serializer = CategorySerializer(category)
+        return Response(serializer.data)
 
     def put(self, request, category_id: int):
         """Обновление категории."""
-        try:
-            serializer = CategorySerializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            updated_category = category_service.update_category(
-                category_id=category_id,
-                data=serializer.validated_data
-            )
-            return Response(CategorySerializer(updated_category).data)
-        except Category.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = CategorySerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        updated_category = category_service.update_category(
+            category_id=category_id,
+            data=serializer.validated_data
+        )
+        return Response(CategorySerializer(updated_category).data)
 
     def delete(self, request, category_id: int):
         """Удаление категории."""
-        try:
-            category_service.delete_category(category_id)
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        except Category.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+        category_service.delete_category(category_id)
+        return Response(status=status.HTTP_204_NO_CONTENT)

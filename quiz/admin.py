@@ -1,6 +1,7 @@
 from django.contrib import admin
 
-from .models import Category, Question, Quiz
+from quiz.constants import PREVIEW_TEXT_LENGTH
+from quiz.models import Category, Question, Quiz
 
 
 @admin.register(Category)
@@ -12,10 +13,9 @@ class CategoryAdmin(admin.ModelAdmin):
     )
     search_fields = ('title',)
 
+    @admin.display(description='Кол-во вопросов')
     def question_count(self, obj):
         return obj.questions.count()
-
-    question_count.short_description = 'Кол-во вопросов'
 
 
 class QuestionInline(admin.TabularInline):
@@ -68,6 +68,10 @@ class QuestionAdmin(admin.ModelAdmin):
     )
 
     def text_preview(self, obj):
-        return obj.text[:50] + '...' if len(obj.text) > 50 else obj.text
+        return (
+            obj.text[:PREVIEW_TEXT_LENGTH]
+            + '...' if len(obj.text)
+            > PREVIEW_TEXT_LENGTH else obj.text
+        )
 
     text_preview.short_description = 'Текст вопроса'

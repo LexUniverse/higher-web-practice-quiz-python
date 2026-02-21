@@ -2,7 +2,8 @@
 
 from rest_framework import serializers
 
-from .models import Category, Question, Quiz
+from quiz.models import Category, Question, Quiz
+from quiz.validators import validate_min_options
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -38,10 +39,7 @@ class QuestionSerializer(serializers.ModelSerializer):
         )
 
     def validate_options(self, value):
-        if len(value) < 2:
-            raise serializers.ValidationError(
-                'Необходимо предоставить минимум два варианта ответа.'
-            )
+        validate_min_options(value)
         return value
 
     def validate(self, data):
